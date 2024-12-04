@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="loginpage.css">
+</head>
+<body>
+  <div class="form-container">
+    <form id="signupForm">
+      <h1>Buat Akun</h1>
+      <p>Silakan buat akun Anda</p>
+      <input type="text" id="signupName" placeholder="Nama" required>
+      <input type="email" id="signupEmail" placeholder="Email" required>
+      <input type="password" id="signupPassword" placeholder="Password" required>
+      <button type="submit">SIGN UP</button>
+      <p>Sudah memiliki akun? <a href="signin.html">Masuk di sini</a></p>
+    </form>
+  </div>
+  
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+
+      // Ambil data pengguna dari localStorage
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      
+      // Looping untuk memeriksa apakah email sudah terdaftar
+      let emailExists = false;
+      for (let i = 0; i < users.length; i++) {
+        if (users[i].email === email) {
+          emailExists = true;
+          break; // Keluar dari loop jika email ditemukan
+        }
+      }
+
+      if (emailExists) {
+        alert('Email sudah terdaftar!');
+      } else {
+        // Tambahkan pengguna baru jika email belum terdaftar
+        users.push({ name, email, password });
+        localStorage.setItem('users', JSON.stringify(users)); // Simpan data pengguna ke localStorage
+        alert('Registrasi berhasil!');
+        window.location.href = 'signin.html'; // Redirect ke halaman login setelah registrasi
+      }
+    });
+  </script>
+</body>
+</html>

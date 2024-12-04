@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk</title>
+  <link rel="stylesheet" href="loginpage.css">
+</head>
+<body>
+  <div class="form-container">
+    <form id="signinForm">
+      <h1>Selamat Datang Kembali!</h1>
+      <p>Silakan masuk dengan akun Anda</p>
+      <input type="email" id="signinEmail" placeholder="Email" required>
+      <input type="password" id="signinPassword" placeholder="Password" required>
+      <button type="submit">MASUK</button>
+      <p>Belum memiliki akun? <a href="signup.html">Daftar di sini</a></p>
+      <p><a href="resetpassword.html">Lupa password?</a></p> <!-- Link Lupa password -->
+    </form>
+  </div>
+
+  <script>
+    // Fungsi untuk memeriksa dan mengupdate jumlah percakapan salah
+    function checkFailedAttempts(formType) {
+      const failedAttempts = JSON.parse(localStorage.getItem(formType + '_failedAttempts')) || 0;
+      return failedAttempts;
+    }
+
+    function incrementFailedAttempts(formType) {
+      const failedAttempts = checkFailedAttempts(formType);
+      localStorage.setItem(formType + '_failedAttempts', JSON.stringify(failedAttempts + 1));
+    }
+
+    function resetFailedAttempts(formType) {
+      localStorage.setItem(formType + '_failedAttempts', JSON.stringify(0));
+    }
+
+    // Fungsi untuk menangani form sign-in
+    document.getElementById('signinForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('signinEmail').value;
+      const password = document.getElementById('signinPassword').value;
+
+      // Cek jumlah percakapan gagal
+      const failedAttempts = checkFailedAttempts('signin');
+      if (failedAttempts >= 3) {
+        alert("Terlalu banyak percakapan gagal. Mengarahkan ke halaman reset password.");
+        setTimeout(() => {
+          window.location.href = 'resetpassword.html'; // Redirect ke halaman reset password
+        }, 1000);
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      let userFound = false;
+
+      // Looping untuk memeriksa apakah email dan password cocok
+      for (let i = 0; i < users.length; i++) {
+        if (users[i].email === email && users[i].password === password) {
+          userFound = true;
+          resetFailedAttempts('signin'); // Reset percakapan gagal jika login berhasil
+          alert(`Selamat datang, ${users[i].name}!`);
+          window.location.href = 'pembelian.html'; // Arahkan ke halaman pembelian
+          break; // Keluar dari loop setelah menemukan pengguna yang cocok
+        }
+      }
+
+      if (!userFound) {
+        incrementFailedAttempts('signin'); // Tambah percakapan gagal jika kredensial salah
+        alert('Email atau password salah!');
+      }
+    });
+  </script>
+</body>
+</html>
